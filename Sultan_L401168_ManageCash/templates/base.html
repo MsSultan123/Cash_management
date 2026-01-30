@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Cash Manager{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 font-sans">
+
+    {% if user.is_authenticated %}
+    <!-- Navigation -->
+    <nav class="bg-gradient-to-r from-blue-600 to-indigo-600 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <!-- Logo -->
+                <a href="{% url 'dashboard' %}" class="flex items-center space-x-2 text-white">
+                    <i class="fas fa-wallet text-2xl"></i>
+                    <span class="text-xl font-semibold">Cash Manager</span>
+                </a>
+
+                <!-- Links -->
+                <div class="flex items-center space-x-6">
+                    <a href="{% url 'dashboard' %}" class="text-white hover:text-yellow-300 transition">Dashboard</a>
+                    <a href="{% url 'cash_list' %}" class="text-white hover:text-green-300 transition">Add Cash</a>
+                    <a href="{% url 'expense_list' %}" class="text-white hover:text-red-300 transition">Expenses</a>
+
+                  <!-- User Menu -->
+                 
+                     <div class="relative group">
+                        <button class="flex items-center space-x-2 text-white hover:text-gray-200">
+                           <i class="fas fa-user-circle text-2xl"></i>
+                           <span>{{ user.first_name|default:user.username }}</span>
+                         </button>
+
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-md
+                                   opacity-0 group-hover:opacity-100 transition-opacity duration-200
+                                    pointer-events-none group-hover:pointer-events-auto z-50">
+                                      <a href="{% url 'logout' %}" 
+                                        class="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md transition hover:text-red-600 hover:font-semibold hover:shadow-md hover:scale-105 hover:duration-300 hover:ease-in-out hover:cursor-pointer-duration-300">
+                                       <i class="fas fa-sign-out-alt mr-2" ></i>Logout
+                                      </a>
+                             </div>
+                 </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% endif %}
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        {% for message in messages %}
+        <div class="p-4 rounded-md mb-4 shadow-sm 
+            {% if message.tags %}bg-{{ message.tags }}-100 text-{{ message.tags }}-700 border border-{{ message.tags }}-300
+            {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+            <div class="flex items-center space-x-3">
+                <i class="fas {% if 'error' in message.tags %}fa-exclamation-circle text-red-500
+                              {% elif 'success' in message.tags %}fa-check-circle text-green-500
+                              {% else %}fa-info-circle text-blue-500{% endif %}"></i>
+                <span>{{ message }}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="bg-white rounded-md shadow p-6">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 text-center text-gray-300">
+            <p>&copy; 2026 Cash Manager. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

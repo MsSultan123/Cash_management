@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Cash Manager{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+    <!-- Welcome Banner -->
+    <div class="bg-blue-600 rounded-md shadow p-6 text-white">
+        <h1 class="text-2xl font-semibold">Welcome, {{ user.first_name|default:user.username }}</h1>
+        <p class="text-sm opacity-80">Manage your cash flow efficiently</p>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-md shadow p-4">
+            <p class="text-xs text-gray-500">Total Income</p>
+            <p class="text-xl font-bold text-green-600 mt-1">৳{{ total_added|floatformat:2 }}</p>
+        </div>
+        <div class="bg-white rounded-md shadow p-4">
+            <p class="text-xs text-gray-500">Total Expenses</p>
+            <p class="text-xl font-bold text-red-600 mt-1">৳{{ total_spent|floatformat:2 }}</p>
+        </div>
+        <div class="bg-white rounded-md shadow p-4">
+            <p class="text-xs text-gray-500">Balance</p>
+            <p class="text-xl font-bold {% if balance >= 0 %}text-blue-600{% else %}text-red-600{% endif %} mt-1">
+                ৳{{ balance|floatformat:2 }}
+            </p>
+        </div>
+        <div class="bg-white rounded-md shadow p-4">
+            <p class="text-xs text-gray-500">Total Transactions</p>
+            <p class="text-xl font-bold text-purple-600 mt-1">{{ cash_additions_count|add:expenses_count }}</p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <a href="{% url 'add_cash' %}" 
+           class="bg-green-600 hover:bg-green-700 text-white rounded-md shadow p-4 text-center transition">
+            Add Income
+        </a>
+        <a href="{% url 'add_expense' %}" 
+           class="bg-red-600 hover:bg-red-700 text-white rounded-md shadow p-4 text-center transition">
+            Add Expense
+        </a>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <!-- Recent Income -->
+        <div class="bg-white rounded-md shadow p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Recent Income</h2>
+                <a href="{% url 'cash_list' %}" class="text-green-600 text-sm">View All</a>
+            </div>
+            {% if recent_added %}
+                <div class="space-y-3">
+                    {% for cash in recent_added %}
+                        <div class="flex justify-between p-3 bg-green-50 rounded-md">
+                            <div>
+                                <p class="font-medium text-gray-800">{{ cash.source }}</p>
+                                <p class="text-xs text-gray-500">{{ cash.datetime|date:"M d, Y H:i" }}</p>
+                            </div>
+                            <p class="text-green-600 font-semibold">+৳{{ cash.amount|floatformat:2 }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-6 text-sm">No income recorded yet</p>
+            {% endif %}
+        </div>
+
+        <!-- Recent Expenses -->
+        <div class="bg-white rounded-md shadow p-4">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-800">Recent Expenses</h2>
+                <a href="{% url 'expense_list' %}" class="text-red-600 text-sm">View All</a>
+            </div>
+            {% if recent_expenses %}
+                <div class="space-y-3">
+                    {% for expense in recent_expenses %}
+                        <div class="flex justify-between p-3 bg-red-50 rounded-md">
+                            <div>
+                                <p class="font-medium text-gray-800">{{ expense.description|truncatewords:3 }}</p>
+                                <p class="text-xs text-gray-500">{{ expense.datetime|date:"M d, Y H:i" }}</p>
+                            </div>
+                            <p class="text-red-600 font-semibold">-৳{{ expense.amount|floatformat:2 }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 text-center py-6 text-sm">No expenses recorded yet</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

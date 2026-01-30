@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Confirm Delete - Cash Manager{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto">
+    <div class="bg-white rounded-md shadow p-6">
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-xl font-semibold text-gray-800">Confirm Deletion</h1>
+            <p class="text-sm text-gray-500">This action cannot be undone.</p>
+        </div>
+
+        <!-- Object Details -->
+        <div class="bg-gray-50 border rounded-md p-4 mb-6 text-sm text-gray-700">
+            {% if object_type == 'Cash Entry' %}
+                <p><strong>Source:</strong> {{ object.source }}</p>
+                <p><strong>Amount:</strong> ৳{{ object.amount|floatformat:2 }}</p>
+                <p><strong>Date:</strong> {{ object.datetime|date:"M d, Y H:i" }}</p>
+            {% else %}
+                <p><strong>Description:</strong> {{ object.description }}</p>
+                <p><strong>Amount:</strong> ৳{{ object.amount|floatformat:2 }}</p>
+                <p><strong>Date:</strong> {{ object.datetime|date:"M d, Y H:i" }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3">
+            <form method="POST" class="flex-1">
+                {% csrf_token %}
+                <button type="submit" 
+                        class="w-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium py-2 rounded-md transition">
+                    Yes, Delete
+                </button>
+            </form>
+
+            {% if object_type == 'Cash Entry' %}
+                <a href="{% url 'cash_list' %}" 
+                   class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium py-2 rounded-md text-center transition">
+                    Cancel
+                </a>
+            {% else %}
+                <a href="{% url 'expense_list' %}" 
+                   class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm font-medium py-2 rounded-md text-center transition">
+                    Cancel
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
